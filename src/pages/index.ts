@@ -1,0 +1,7 @@
+export * from "./Login/LoginPage.tsx"
+export * from "./Profile/ProfilePage.tsx"
+export * from "./manageDoctors/ManageDoctorsPage.tsx"
+export * from "./Register/RegisterPage.tsx"
+export * from "./ManagePacients/ManagePacientsPage.tsx"
+export * from "./ManageServices/ManageServicesPage.tsx"
+export * from "./Amenities/AmenitiesPage.tsx"
