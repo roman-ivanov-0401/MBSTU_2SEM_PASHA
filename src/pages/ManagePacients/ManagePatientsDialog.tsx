@@ -1,5 +1,5 @@
 import { FC, RefObject } from "react"
-import {IAmenitie} from "../../models";
+import { IPatient } from "../../models";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -17,19 +17,20 @@ import {
 import { useForm, SubmitHandler } from "react-hook-form";
 
 export interface FormFields{
+    surname: string
     name: string
-    description: string
-    startOfReception: Date,
-    endOfReception: Date
+    middleName: string
+    phoneNumber: string
+    SNILS: string
 }
 export interface ManageServiceDialogProps{
     isOpen: boolean
     onClose: () => void
-    service: IAmenitie,
+    patient: IPatient,
     ref:RefObject<HTMLButtonElement>
 }
-export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
-    { isOpen, onClose, ref, service }
+export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
+    { isOpen, onClose, ref, patient }
 ) => {
 
     const { register,
@@ -46,16 +47,32 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
             <AlertDialogOverlay>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        Редактирование услуги
+                        Редактирование данных пациента
                     </AlertDialogHeader>
                     <AlertDialogBody>
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <FormControl isInvalid={Boolean(errors.name)}>
-                                <FormLabel htmlFor="name">Название</FormLabel>
+                            <FormControl isInvalid={Boolean(errors.surname)}>
+                                <FormLabel htmlFor="name">Фамилия</FormLabel>
                                 <Input
-                                    placeholder="Название"
+                                    placeholder="Фамилия"
+                                    id="surname"
+                                    defaultValue={patient.surname}
+                                    {...register("surname", {
+                                        required: "Поле не может быть пустым"
+                                    })}
+                                />
+                                <FormErrorMessage>
+                                    {
+                                        errors.surname && errors.surname.message
+                                    }
+                                </FormErrorMessage>
+                            </FormControl>
+                            <FormControl isInvalid={Boolean(errors.name)}>
+                                <FormLabel htmlFor="name">Имя</FormLabel>
+                                <Input
+                                    placeholder="Имя"
                                     id="name"
-                                    defaultValue={service.name}
+                                    defaultValue={patient.name}
                                     {...register("name", {
                                         required: "Поле не может быть пустым"
                                     })}
@@ -66,45 +83,57 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
                                     }
                                 </FormErrorMessage>
                             </FormControl>
-                            <FormControl isInvalid={Boolean(errors.description)}>
-                                <FormLabel htmlFor={"description"}>Описание</FormLabel>
+                            <FormControl isInvalid={Boolean(errors.middleName)}>
+                                <FormLabel htmlFor="name">Отчество</FormLabel>
                                 <Input
-                                    placeholder="Описание"
-                                    id="description"
-                                    defaultValue={service.description}
-                                    {...register("description", {
+                                    placeholder="Отчество"
+                                    id="middleName"
+                                    defaultValue={patient.middleName}
+                                    {...register("middleName", {
                                         required: "Поле не может быть пустым"
                                     })}
                                 />
                                 <FormErrorMessage>
                                     {
-                                        errors.description && errors.description.message
+                                        errors.middleName && errors.middleName.message
                                     }
                                 </FormErrorMessage>
                             </FormControl>
-                            <FormControl>
-                                <FormLabel htmlFor="startTime">Начало приёма</FormLabel>
-                                <Input type="datetime-local"
-                                       id="startTime"
-                                       defaultValue={service.startOfReception.toDateString()}
-                                       {
-                                    ...register("startOfReception",{
-                                        required: "Поле не может быть пустым"
-                                    })
+                            <FormControl isInvalid={Boolean(errors.phoneNumber)}>
+                                <FormLabel htmlFor="phoneNumber">Контактный номер</FormLabel>
+                                <Input
+                                    placeholder="Номер телефона"
+                                    id="phoneNumber"
+                                    defaultValue={patient.phoneNumber}
+                                    {...register("phoneNumber", {
+                                        required: "Поле не может быть пустым",
+                                        pattern: {
+                                            value: new RegExp("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$"),
+                                            message: "Некорректный формат"
+                                        }
+                                    })}
+                                />
+                                <FormErrorMessage>
+                                    {
+                                        errors.phoneNumber && errors.phoneNumber.message
                                     }
-                                />
+                                </FormErrorMessage>
                             </FormControl>
-                            <FormControl>
-                                <FormLabel htmlFor="endDate">Окончание приёма</FormLabel>
-                                <Input type="datetime-local"
-                                       id="endDate"
-                                       defaultValue={service.endOfReception.toDateString()}
-                                       {
-                                    ...register("endOfReception",{
+                            <FormControl isInvalid={Boolean(errors.SNILS)}>
+                                <FormLabel htmlFor="OMS">ОМС</FormLabel>
+                                <Input
+                                    placeholder="ОМС"
+                                    id="OMS"
+                                    defaultValue={patient.SNILS}
+                                    {...register("SNILS", {
                                         required: "Поле не может быть пустым"
-                                    })
-                                       }
+                                    })}
                                 />
+                                <FormErrorMessage>
+                                    {
+                                        errors.SNILS && errors.SNILS.message
+                                    }
+                                </FormErrorMessage>
                             </FormControl>
                             <Box
                                 display="flex"

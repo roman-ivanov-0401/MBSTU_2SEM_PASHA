@@ -1,4 +1,4 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {PROXY} from "../consts.ts";
 import {RootState} from "../store/store.ts";
 import {IAmenitie} from "../models";

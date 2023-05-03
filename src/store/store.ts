@@ -1,6 +1,6 @@
 import {combineReducers, configureStore} from "@reduxjs/toolkit"
 import {authApi, patientApi} from "../service";
-import authReducer from "./slices/auth.slice.ts"
+import authReducer, {authSlice} from "./slices/auth.slice.ts"
 import {doctorApi} from "../service/doctor.service.ts";
 import {amenitieApi} from "../service/amenitie.service.ts";
 
@@ -14,7 +14,13 @@ const rootReducer = combineReducers({
 })
 export const setupStore = () => {
     return configureStore({
-        reducer: rootReducer
+        reducer: rootReducer,
+        middleware: getDefaultMiddleware =>
+            getDefaultMiddleware()
+                .concat(authApi.middleware)
+                .concat(patientApi.middleware)
+                .concat(doctorApi.middleware)
+                .concat(amenitieApi.middleware)
     })
 }
 

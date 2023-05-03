@@ -9,7 +9,7 @@ interface AuthState{
 const initialState: AuthState = {
     token: "",
     email: "",
-    role: ""
+    role: "ADMIN"
 }
 
 export const authSlice = createSlice({
@@ -18,6 +18,9 @@ export const authSlice = createSlice({
     reducers: {
         setToken(state, action: PayloadAction<string>){
             state.token = action.payload
+        },
+        setRole(state, action: PayloadAction<string>){
+          state.role = action.payload.toUpperCase()
         }
     }
 })

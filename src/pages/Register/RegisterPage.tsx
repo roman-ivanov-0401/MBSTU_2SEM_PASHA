@@ -1,18 +1,24 @@
 import { FC } from "react"
 import {Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Text} from "@chakra-ui/react";
 import {useForm, SubmitHandler} from "react-hook-form";
+import {Fields} from "./registerPage.types.ts"
+import { authApi } from "../../service";
+import {useNavigate} from "react-router-dom";
 
-interface Fields{
-    email: string
-    password: string,
-    repPassword: string
-}
 
-const onSubmit: SubmitHandler<Fields> = () => { }
 export const RegisterPage: FC = () => {
     const {register,
         handleSubmit,
         formState: {errors} } = useForm <Fields>({mode: "onChange"})
+    const [ registerUser, { error } ] = authApi.useRegisterMutation()
+    const navigate = useNavigate()
+    const onSubmit: SubmitHandler<Fields> = ({email, password}) => {
+        registerUser({
+            email,
+            password
+        })
+        navigate("/services")
+    }
 
     return(
         <Box

@@ -2,12 +2,16 @@ import {FC} from "react"
 import {Box, Button, IconButton, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {HamburgerIcon} from "@chakra-ui/icons";
 import {NavigationProps} from "./navigation.types.ts";
-import {Link} from "react-router-dom";
-import {useAppSelector} from "../../hooks";
+import {Link, useNavigate} from "react-router-dom";
+import {useAppSelector, useAppDispatch} from "../../hooks";
+import {authSlice} from "../../store/slices/auth.slice.ts";
 
 export const Navigation: FC<NavigationProps> = ({ points }) => {
     const { token } = useAppSelector(state => state.authReducer)
-
+    const dispatch = useAppDispatch()
+    const onExitHandler = () => {
+        dispatch(authSlice.actions.setRole(""))
+    }
     return(
         <Box
             display="flex"
@@ -18,6 +22,7 @@ export const Navigation: FC<NavigationProps> = ({ points }) => {
             right={0}
             left={0}
             padding={5}
+            backgroundColor={"teal"}
         >
             <Menu
                 strategy={"absolute"}
@@ -26,25 +31,34 @@ export const Navigation: FC<NavigationProps> = ({ points }) => {
                     as={IconButton}
                     aria-label='Options'
                     icon={<HamburgerIcon />}
-                    variant="outline"
+                    variant={"contained"}
                     fontSize={36}
+                    color={"white"}
                 />
-                <MenuList>
+                <MenuList >
                     {
                         points.map(({ path, name }) =>
                             <Link
                                 to={path}
                                 key={path}
                             >
-                                <MenuItem>
+                                <MenuItem
+                                    backgroundColor={"#fff"}
+                                >
                                     {name}
                                 </MenuItem>
                             </Link>
                         )
                     }
                 </MenuList>
-                <Text fontSize={32} lineHeight={0}>
-                    Калужанин отдыхает
+                <Text
+                    fontSize={32}
+                    lineHeight={0}
+                    marginTop={5}
+                    color="white"
+                    fontWeight={700}
+                >
+                    Калужская Частная поликлиника им. Н.Э.Баумана
                 </Text>
                 <div>
                     {
@@ -53,6 +67,7 @@ export const Navigation: FC<NavigationProps> = ({ points }) => {
                             backgroundColor="#ff3333"
                             variant="solid"
                             color={"#ffffff"}
+                            onClick={onExitHandler}
                         >
                             Выйти
                         </Button>

@@ -13,7 +13,7 @@ const UserRouter: FC = () => {
                     <Navigate to={"services"}/>
                 }/>
                 <Route path="services" element={<AmenitiesPage/>}/>
-                <Route path="register" element={<ProfilePage/>}/>
+                <Route path="profile" element={<ProfilePage/>}/>
                 <Route path="*" element={
                     <Navigate to={"services"}/>
                 }/>

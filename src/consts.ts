@@ -1,1 +1,1 @@
-export const PROXY = "http://"
+export const PROXY = "https://localhost:7110/api"

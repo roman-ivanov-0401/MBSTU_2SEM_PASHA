@@ -15,14 +15,14 @@ const AdminRouter: FC = () => {
                 path="/"
                 element={<AdminLayout/>}>
                 <Route index element={
-                    <Navigate to={"manageServices"}/>
+                    <Navigate to={"manageAmenities"}/>
                 }/>
                 <Route path="manageAmenities" element={<ManageServicesPage/>}/>
                 <Route path="manageDoctors" element={<ManageDoctorsPage/>}/>
                 <Route path="managePatients" element={<ManagePacientsPage/>}/>
                 <Route path="profile" element={<ProfilePage/>}/>
                 <Route path="*" element={
-                    <Navigate to={"manageServices"}/>
+                    <Navigate to={"manageAmenities"}/>
                 }/>
             </Route>
         </Routes>

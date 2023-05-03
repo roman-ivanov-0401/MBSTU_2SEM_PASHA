@@ -1,5 +1,5 @@
 import { FC, RefObject } from "react"
-import { IPatient } from "../../models";
+import {IDoctor} from "../../models";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -17,20 +17,19 @@ import {
 import { useForm, SubmitHandler } from "react-hook-form";
 
 export interface FormFields{
-    surname: string
     name: string
+    surname: string
     middleName: string
-    phoneNumber: string
-    SNILS: string
+    specialization: string
 }
-export interface ManageServiceDialogProps{
+export interface ManageDoctorsDialogProps{
     isOpen: boolean
     onClose: () => void
-    patient: IPatient,
+    doctor: IDoctor,
     ref:RefObject<HTMLButtonElement>
 }
-export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
-    { isOpen, onClose, ref, patient }
+export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
+    { isOpen, onClose, ref, doctor }
 ) => {
 
     const { register,
@@ -47,7 +46,7 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
             <AlertDialogOverlay>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        Редактирование данных пациента
+                        Редактирование данных врача
                     </AlertDialogHeader>
                     <AlertDialogBody>
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -56,7 +55,7 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
                                 <Input
                                     placeholder="Фамилия"
                                     id="surname"
-                                    defaultValue={patient.surname}
+                                    defaultValue={doctor.surname}
                                     {...register("surname", {
                                         required: "Поле не может быть пустым"
                                     })}
@@ -72,7 +71,7 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
                                 <Input
                                     placeholder="Имя"
                                     id="name"
-                                    defaultValue={patient.name}
+                                    defaultValue={doctor.name}
                                     {...register("name", {
                                         required: "Поле не может быть пустым"
                                     })}
@@ -88,7 +87,7 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
                                 <Input
                                     placeholder="Отчество"
                                     id="middleName"
-                                    defaultValue={patient.middleName}
+                                    defaultValue={doctor.middleName}
                                     {...register("middleName", {
                                         required: "Поле не может быть пустым"
                                     })}
@@ -99,39 +98,19 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
                                     }
                                 </FormErrorMessage>
                             </FormControl>
-                            <FormControl isInvalid={Boolean(errors.phoneNumber)}>
-                                <FormLabel htmlFor="phoneNumber">Контактный номер</FormLabel>
+                            <FormControl isInvalid={Boolean(errors.specialization)}>
+                                <FormLabel htmlFor="specialization">Специализация</FormLabel>
                                 <Input
-                                    placeholder="Номер телефона"
-                                    id="phoneNumber"
-                                    defaultValue={patient.phoneNumber}
-                                    {...register("phoneNumber", {
-                                        required: "Поле не может быть пустым",
-                                        pattern: {
-                                            value: new RegExp("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$"),
-                                            message: "Некорректный формат"
-                                        }
-                                    })}
-                                />
-                                <FormErrorMessage>
-                                    {
-                                        errors.phoneNumber && errors.phoneNumber.message
-                                    }
-                                </FormErrorMessage>
-                            </FormControl>
-                            <FormControl isInvalid={Boolean(errors.SNILS)}>
-                                <FormLabel htmlFor="OMS">ОМС</FormLabel>
-                                <Input
-                                    placeholder="ОМС"
-                                    id="OMS"
-                                    defaultValue={patient.SNILS}
-                                    {...register("SNILS", {
+                                    placeholder="Специализация"
+                                    id="specialization"
+                                    defaultValue={doctor.specialization}
+                                    {...register("specialization", {
                                         required: "Поле не может быть пустым"
                                     })}
                                 />
                                 <FormErrorMessage>
                                     {
-                                        errors.SNILS && errors.SNILS.message
+                                        errors.specialization && errors.specialization.message
                                     }
                                 </FormErrorMessage>
                             </FormControl>

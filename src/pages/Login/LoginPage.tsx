@@ -1,17 +1,28 @@
-import { FC } from "react"
-import {Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Text} from "@chakra-ui/react";
+import {FC} from "react"
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Text } from "@chakra-ui/react";
 import {useForm, SubmitHandler} from "react-hook-form";
+import { Fields } from "./loginPage.types.ts"
+import {authApi} from "../../service";
+import { useNavigate } from "react-router-dom"
 
-interface Fields{
-    email: string
-    password: string
-}
 
-const onSubmit: SubmitHandler<Fields> = () => { }
+
 export const LoginPage: FC = () => {
     const {register,
         handleSubmit,
         formState: {errors} } = useForm <Fields>({mode: "onChange"})
+    const [ sendRequest, { error: requestError} ]
+        = authApi.useLoginMutation()
+
+    const navigate = useNavigate()
+    const onSubmit: SubmitHandler<Fields> = (formData) => {
+        sendRequest(formData)
+        navigate("/services")
+    }
+
+    // useEffect(() => {
+    //     navigate()
+    // }, [isSuccess, navigate()])
 
     return(
       <Box
@@ -79,6 +90,12 @@ export const LoginPage: FC = () => {
                       Войти
                   </Button>
               </form>
+              {
+                  requestError &&
+                  <Text color="#ff0000">
+                      Ошибка авторизации. Неверный адресс электронной почты или пароль.
+                  </Text>
+              }
           </Box>
       </Box>
     )
