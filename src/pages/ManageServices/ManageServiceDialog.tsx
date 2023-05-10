@@ -15,6 +15,8 @@ import {
 } from "@chakra-ui/react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import {useAppDispatch} from "../../hooks";
+import {amenitieSlice} from "../../store/slices";
 
 export interface FormFields{
     name: string
@@ -33,12 +35,19 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
 ) => {
 
     const { register,
-        formState: {errors},
-        handleSubmit
+        formState: {errors, isValid},
+        handleSubmit,
     } = useForm<FormFields>({mode: "onChange"})
-
-    const onSubmit: SubmitHandler<FormFields> = () => {
-        console.log("lalls")
+    const dispatch = useAppDispatch()
+    const onSubmit: SubmitHandler<FormFields> = (formdata) => {
+        console.log(formdata)
+        dispatch(amenitieSlice.actions.editAmenitie({
+            id: service.id,
+            description: formdata.description,
+            endOfReception: formdata.endOfReception.toString(),
+            name: formdata.name,
+            startOfReception: formdata.startOfReception.toString()
+        }))
     }
 
     return(
@@ -86,7 +95,6 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
                                 <FormLabel htmlFor="startTime">Начало приёма</FormLabel>
                                 <Input type="datetime-local"
                                        id="startTime"
-                                       defaultValue={service.startOfReception.toDateString()}
                                        {
                                     ...register("startOfReception",{
                                         required: "Поле не может быть пустым"
@@ -98,7 +106,6 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
                                 <FormLabel htmlFor="endDate">Окончание приёма</FormLabel>
                                 <Input type="datetime-local"
                                        id="endDate"
-                                       defaultValue={service.endOfReception.toDateString()}
                                        {
                                     ...register("endOfReception",{
                                         required: "Поле не может быть пустым"
@@ -114,7 +121,7 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
                                 <Button variant="solid" colorScheme="red" marginRight="10px" onClick={onClose}>
                                     Отмена
                                 </Button>
-                                <Button variant="solid" colorScheme="teal" type="submit">
+                                <Button variant="solid" colorScheme="teal" type="submit" onClick={onClose} disabled={!isValid}>
                                     Изменить
                                 </Button>
                             </Box>

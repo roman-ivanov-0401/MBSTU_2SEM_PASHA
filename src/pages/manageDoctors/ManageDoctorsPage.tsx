@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import {FC, useRef, useState} from "react"
 import {
     Box,
     Text,
@@ -16,10 +16,24 @@ import {
 } from "@chakra-ui/react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import { ManageDoctorsDialog } from "./ManageDoctorsDialog.tsx"
+import {useAppDispatch, useAppSelector} from "../../hooks";
+import { doctorSlice } from "../../store/slices";
+import {IDoctor} from "../../models";
 
 export const ManageDoctorsPage: FC = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
+    const doctors = useAppSelector(state => state.doctorReducer.doctors)
+    const dispatch = useAppDispatch();
+    const deleteDoctorHander = (id: string): void => {
+        dispatch(doctorSlice.actions.deleteDoctor(id))
+    }
+    const editDoctorHandler = (_id: string) => {
+        setCurrentDoctor(
+            doctors.find(({ id }) => _id == id)
+        )
+    }
+    const [currentDoctor, setCurrentDoctor] = useState<IDoctor | undefined>(undefined);
     return(
         <Box
             marginTop={20}
@@ -60,35 +74,41 @@ export const ManageDoctorsPage: FC = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        <Tr>
-                            <Td>
-                                1
-                            </Td>
-                            <Td>
-                                Петров
-                            </Td>
-                            <Td>
-                                Иван
-                            </Td>
-                            <Td>
-                                Сергеевич
-                            </Td>
-                            <Td>
-                                Хирург
-                            </Td>
-                            <Td>
-                                <IconButton
-                                    aria-label={"edit"}
-                                    icon={<EditIcon/>}
-                                    marginRight="10px"
-                                    onClick={onOpen}
-                                />
-                                <IconButton
-                                    aria-label={"delete"}
-                                    icon={<DeleteIcon/>}
-                                />
-                            </Td>
-                        </Tr>
+                        {
+                            doctors.map(({ id, name, middleName, surname, specialization}, index) =>
+                                <Tr key={id}>
+                                    <Td>
+                                        {index + 1}
+                                    </Td>
+                                    <Td>
+                                        {surname}
+                                    </Td>
+                                    <Td>
+                                        {name}
+                                    </Td>
+                                    <Td>
+                                        {middleName}
+                                    </Td>
+                                    <Td>
+                                        {specialization}
+                                    </Td>
+                                    <Td>
+                                        <IconButton
+                                            aria-label={"edit"}
+                                            icon={<EditIcon/>}
+                                            marginRight="10px"
+                                            onClick={() => {editDoctorHandler(id); onOpen()}}
+                                        />
+                                        <IconButton
+                                            aria-label={"delete"}
+                                            icon={<DeleteIcon/>}
+                                            onClick={() => deleteDoctorHander(id)}
+                                        />
+                                    </Td>
+                                </Tr>
+                            )
+                        }
+
                     </Tbody>
                     <Tfoot>
                         <Tr>
@@ -114,7 +134,7 @@ export const ManageDoctorsPage: FC = () => {
                     </Tfoot>
                 </Table>
             </TableContainer>
-            <ManageDoctorsDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} doctor={{
+            <ManageDoctorsDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} doctor={currentDoctor || {
                 specialization: "",
                 name: "",
                 surname: "",

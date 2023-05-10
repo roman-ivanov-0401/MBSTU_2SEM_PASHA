@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import {FC, useRef, useState} from "react"
 import {
     Box,
     Text,
@@ -16,10 +16,25 @@ import {
 } from "@chakra-ui/react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import { ManageServiceDialog } from "./ManageServiceDialog.tsx"
+import {useAppDispatch, useAppSelector} from "../../hooks";
+import {amenitieSlice} from "../../store/slices";
+import {IAmenitie} from "../../models";
 
 export const ManageServicesPage: FC = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
+    const dispatch = useAppDispatch()
     const cancelRef = useRef<HTMLButtonElement>(null)
+    const amenities = useAppSelector(state => state.amenitieReducer.amenities)
+    const [ currentAmenitie, setCurrentAmenitie ] = useState<IAmenitie | undefined>(undefined)
+    const deleteAmenitieHandler = (_id: string): void => {
+        dispatch(amenitieSlice.actions.deleteAmenitie(_id));
+    }
+    const editAmenitieHandler = (_id: string) => {
+        setCurrentAmenitie(
+            amenities.find(({ id }) => id == _id)
+        )
+
+    }
     return(
         <Box
             marginTop={20}
@@ -60,39 +75,41 @@ export const ManageServicesPage: FC = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        <Tr>
-                            <Td>
-                                1
-                            </Td>
-                            <Td>
-                                Название1
-                            </Td>
-                            <Td>
-                                Описание1
-                            </Td>
-                            <Td>
-                                {
-                                    new Date().toDateString()
-                                }
-                            </Td>
-                            <Td>
-                                {
-                                    new Date().toDateString()
-                                }
-                            </Td>
-                            <Td>
-                                <IconButton
-                                    aria-label={"edit"}
-                                    icon={<EditIcon/>}
-                                    marginRight="10px"
-                                    onClick={onOpen}
-                                />
-                                <IconButton
-                                    aria-label={"delete"}
-                                    icon={<DeleteIcon/>}
-                                />
-                            </Td>
-                        </Tr>
+                        {
+                            amenities.map(({ id, name, startOfReception, endOfReception, description}, index) =>
+                                <Tr key={id}>
+                                    <Td>
+                                        { index + 1 }
+                                    </Td>
+                                    <Td>
+                                        { name }
+                                    </Td>
+                                    <Td>
+                                        { description }
+                                    </Td>
+                                    <Td>
+                                        { startOfReception }
+                                    </Td>
+                                    <Td>
+                                        { endOfReception }
+                                    </Td>
+                                    <Td>
+                                        <IconButton
+                                            aria-label={"edit"}
+                                            icon={<EditIcon/>}
+                                            marginRight="10px"
+                                            onClick={() => {editAmenitieHandler(id); onOpen()}}
+                                        />
+                                        <IconButton
+                                            onClick={() => deleteAmenitieHandler(id)}
+                                            aria-label={"delete"}
+                                            icon={<DeleteIcon/>}
+                                        />
+                                    </Td>
+                                </Tr>
+                            )
+                        }
+
                     </Tbody>
                     <Tfoot>
                         <Tr>
@@ -118,12 +135,12 @@ export const ManageServicesPage: FC = () => {
                     </Tfoot>
                 </Table>
             </TableContainer>
-            <ManageServiceDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} service={{
+            <ManageServiceDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} service={currentAmenitie || {
                 description: "",
-                endOfReception: new Date(),
+                endOfReception: "",
                 name: "",
                 id: "",
-                startOfReception: new Date()
+                startOfReception: ""
             }}/>
         </Box>
     )

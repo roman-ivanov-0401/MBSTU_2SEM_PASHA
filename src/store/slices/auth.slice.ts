@@ -1,26 +1,44 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {IUser, Roles} from "../../models/IUser.ts";
 
 interface AuthState{
-    token: string,
-    email: string,
-    role: string
+    token: string
+    user: IUser
+    users: IUser[]
 }
 
 const initialState: AuthState = {
     token: "",
-    email: "",
-    role: "ADMIN"
+    user: {
+        _id: "",
+        email: "",
+        patientId: "",
+        password: "",
+        roles: []
+    },
+    users: [
+        {
+        _id: "",
+        password: "admin",
+        email: "admin@admin.com",
+        patientId: "",
+        roles: [Roles.PATIENT, Roles.ADMIN]
+        }
+    ]
 }
 
 export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        setToken(state, action: PayloadAction<string>){
-            state.token = action.payload
+        addUser(state, action: PayloadAction<IUser>) {
+            state.users.push(action.payload)
         },
-        setRole(state, action: PayloadAction<string>){
-          state.role = action.payload.toUpperCase()
+        setUser(state, action: PayloadAction<IUser>) {
+            state.user = action.payload
+        },
+        logout(state){
+            state.user = initialState.user
         }
     }
 })

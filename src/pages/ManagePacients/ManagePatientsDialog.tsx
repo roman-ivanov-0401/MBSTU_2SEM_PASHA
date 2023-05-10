@@ -15,6 +15,8 @@ import {
 } from "@chakra-ui/react";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import {useAppDispatch} from "../../hooks";
+import {patientSlice} from "../../store/slices";
 
 export interface FormFields{
     surname: string
@@ -38,9 +40,17 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
         handleSubmit
     } = useForm<FormFields>({mode: "onChange"})
 
-    const onSubmit: SubmitHandler<FormFields> = () => {
-        console.log("lalls")
+    const onSubmit: SubmitHandler<FormFields> = ({ SNILS, surname, phoneNumber, name, middleName }) => {
+        dispatch(patientSlice.actions.editPatient({
+            id: patient.id,
+            name,
+            middleName,
+            SNILS,
+            phoneNumber,
+            surname
+        }))
     }
+    const dispatch = useAppDispatch();
 
     return(
         <AlertDialog leastDestructiveRef={ref} isOpen={isOpen} onClose={onClose}>
@@ -143,7 +153,7 @@ export const ManagePatientsDialog: FC<ManageServiceDialogProps> = (
                                 <Button variant="solid" colorScheme="red" marginRight="10px" onClick={onClose}>
                                     Отмена
                                 </Button>
-                                <Button variant="solid" colorScheme="teal" type="submit">
+                                <Button variant="solid" colorScheme="teal" type="submit" onClick={onClose}>
                                     Изменить
                                 </Button>
                             </Box>

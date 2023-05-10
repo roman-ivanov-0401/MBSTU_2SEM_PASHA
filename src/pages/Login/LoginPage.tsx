@@ -1,28 +1,28 @@
-import {FC} from "react"
+import {FC, useState} from "react"
 import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input, Text } from "@chakra-ui/react";
 import {useForm, SubmitHandler} from "react-hook-form";
 import { Fields } from "./loginPage.types.ts"
-import {authApi} from "../../service";
-import { useNavigate } from "react-router-dom"
+import {useAppDispatch, useAppSelector} from "../../hooks";
+import {authSlice} from "../../store/slices";
 
 
 
 export const LoginPage: FC = () => {
+    const users = useAppSelector(state => state.authReducer.users)
+
+    const [requestError, setRequestError] = useState<boolean>(false)
+
+    const dispatch = useAppDispatch()
     const {register,
         handleSubmit,
         formState: {errors} } = useForm <Fields>({mode: "onChange"})
-    const [ sendRequest, { error: requestError} ]
-        = authApi.useLoginMutation()
-
-    const navigate = useNavigate()
-    const onSubmit: SubmitHandler<Fields> = (formData) => {
-        sendRequest(formData)
-        navigate("/services")
+    const onSubmit: SubmitHandler<Fields> = ({email, password}) => {
+        const index = users.findIndex((u) => u.email == email && u.password == password)
+        if(index != -1){
+            dispatch(authSlice.actions.setUser(users[index]))
+        }
+        else setRequestError(true)
     }
-
-    // useEffect(() => {
-    //     navigate()
-    // }, [isSuccess, navigate()])
 
     return(
       <Box

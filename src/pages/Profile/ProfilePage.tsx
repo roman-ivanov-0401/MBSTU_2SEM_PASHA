@@ -1,20 +1,24 @@
-import { FC } from "react"
+import {FC} from "react"
 import {
     Box,
+    Divider,
     Table,
-    Text,
-    Thead,
-    Tbody,
-    Tfoot,
-    Tr,
-    Th,
-    Td,
     TableCaption,
     TableContainer,
-    Divider,
+    Tbody,
+    Td,
+    Text,
+    Tfoot,
+    Th,
+    Thead,
+    Tr,
 } from "@chakra-ui/react";
+import {useAppSelector} from "../../hooks";
 
 export const ProfilePage: FC = () => {
+    const authUser = useAppSelector(state => state.authReducer.user);
+    const authPatient = useAppSelector(state => state.patientReducer.patients.find(({ id }) => id == authUser.patientId))
+    const userAppointments = useAppSelector(state => state.appointmentReducer.appointments.filter(({ patientId }) => patientId == authPatient?.id))
     return(
         <Box
             marginTop={20}
@@ -52,14 +56,14 @@ export const ProfilePage: FC = () => {
                         >
                             Фамилия:&nbsp;
                         </span>
-                            Петров
+                            {authPatient?.surname}
                         </Text>
                         <Text fontSize="24px">
                         <span
                             style={{fontWeight: "700"}}
                         >Имя:&nbsp;
                         </span>
-                            Иван
+                            {authPatient?.name}
                         </Text>
                         <Text fontSize="24px">
                         <span
@@ -67,7 +71,7 @@ export const ProfilePage: FC = () => {
                         >
                             Отчество:&nbsp;
                         </span>
-                            Сергеевич
+                            {authPatient?.middleName}
                         </Text>
                         <Text fontSize="24px">
                         <span
@@ -75,7 +79,7 @@ export const ProfilePage: FC = () => {
                         >
                             Контактный номер:&nbsp;
                         </span>
-                            +7 (910) 456-45-67
+                            +7 { authPatient?.phoneNumber }
                         </Text>
                         <Text fontSize="24px">
                         <span
@@ -83,7 +87,7 @@ export const ProfilePage: FC = () => {
                         >
                             ОМС:&nbsp;
                         </span>
-                            123455623
+                            {authPatient?.SNILS}
                         </Text>
                     </Box>
                 </Box>
@@ -114,48 +118,24 @@ export const ProfilePage: FC = () => {
                                 </Tr>
                             </Thead>
                             <Tbody>
-                                <Tr>
-                                    <Td>
-                                        1
-                                    </Td>
-                                    <Td>
-                                        Запись 1
-                                    </Td>
-                                    <Td>
-                                        Услуга 1
-                                    </Td>
-                                    <Td>
-                                        01.01.2001
-                                    </Td>
-                                </Tr>
-                                <Tr>
-                                    <Td>
-                                        1
-                                    </Td>
-                                    <Td>
-                                        Услуга 2
-                                    </Td>
-                                    <Td>
-                                        Врач 2
-                                    </Td>
-                                    <Td>
-                                        01.01.2001
-                                    </Td>
-                                </Tr>
-                                <Tr>
-                                <Td>
-                                    1
-                                </Td>
-                                <Td>
-                                    Услуга 3
-                                </Td>
-                                <Td>
-                                    Врач 3
-                                </Td>
-                                <Td>
-                                    01.01.2001
-                                </Td>
-                            </Tr>
+                                {
+                                    userAppointments.map(({ id, amenitieName, doctorName, date }, index) =>
+                                        <Tr key={id}>
+                                            <Td>
+                                                { index + 1 }
+                                            </Td>
+                                            <Td>
+                                                { doctorName }
+                                            </Td>
+                                            <Td>
+                                                { amenitieName }
+                                            </Td>
+                                            <Td>
+                                                { date }
+                                            </Td>
+                                        </Tr>
+                                    )
+                                }
                             </Tbody>
                             <Tfoot>
                                 <Tr>

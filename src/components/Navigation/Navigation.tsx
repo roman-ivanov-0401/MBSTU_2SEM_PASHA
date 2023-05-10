@@ -2,15 +2,21 @@ import {FC} from "react"
 import {Box, Button, IconButton, Menu, MenuButton, MenuItem, MenuList, Text} from "@chakra-ui/react";
 import {HamburgerIcon} from "@chakra-ui/icons";
 import {NavigationProps} from "./navigation.types.ts";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {useAppSelector, useAppDispatch} from "../../hooks";
 import {authSlice} from "../../store/slices/auth.slice.ts";
 
 export const Navigation: FC<NavigationProps> = ({ points }) => {
-    const { token } = useAppSelector(state => state.authReducer)
+    const { user } = useAppSelector(state => state.authReducer)
     const dispatch = useAppDispatch()
     const onExitHandler = () => {
-        dispatch(authSlice.actions.setRole(""))
+        dispatch(authSlice.actions.setUser({
+            email: "",
+            roles: [],
+            password: "",
+            _id: "",
+            patientId: ""
+        }))
     }
     return(
         <Box
@@ -62,7 +68,7 @@ export const Navigation: FC<NavigationProps> = ({ points }) => {
                 </Text>
                 <div>
                     {
-                        Boolean(token) &&
+                        user.roles.length > 0 &&
                         <Button
                             backgroundColor="#ff3333"
                             variant="solid"

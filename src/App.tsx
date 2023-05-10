@@ -1,10 +1,11 @@
 import {useAppSelector} from "./hooks";
 import {AdminRouter, NotAuthorizedRouter, UserRouter} from "./routers";
+import {Roles} from "./models/IUser.ts";
 
 function App() {
-  const { role } = useAppSelector(state => state.authReducer)
-  if(role == "ADMIN") return <AdminRouter/>
-  if(role == "USER") return  <UserRouter/>
+  const { roles } = useAppSelector(state => state.authReducer.user)
+  if(roles.includes(Roles.ADMIN)) return <AdminRouter/>
+  if(roles.includes(Roles.PATIENT)) return  <UserRouter/>
   return <NotAuthorizedRouter/>
 }
 

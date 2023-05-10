@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import {FC, useRef, useState} from "react"
 import {
     Box,
     Text,
@@ -16,10 +16,22 @@ import {
 } from "@chakra-ui/react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import { ManagePatientsDialog } from "./ManagePatientsDialog.tsx"
+import {useAppDispatch, useAppSelector} from "../../hooks";
+import {patientSlice} from "../../store/slices";
+import {IPatient} from "../../models";
 
 export const ManagePacientsPage: FC = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
+    const dispatch = useAppDispatch();
+    const patients = useAppSelector(state => state.patientReducer.patients)
+    const deleteHandler = (id: string): void => {
+        dispatch(patientSlice.actions.deletePatient(id))
+    }
+    const [currentPatient, setCurrentPatient] = useState<IPatient | undefined>(undefined)
+    const changePatientHandler = (_id: string) => {
+        setCurrentPatient(patients.find(({ id }) => _id == id))
+    }
     return(
         <Box
             marginTop={20}
@@ -35,7 +47,7 @@ export const ManagePacientsPage: FC = () => {
             <TableContainer>
                 <Table>
                     <TableCaption>
-                        Услуги
+                        Пациенты
                     </TableCaption>
                     <Thead>
                         <Tr>
@@ -63,38 +75,44 @@ export const ManagePacientsPage: FC = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        <Tr>
-                            <Td>
-                                1
-                            </Td>
-                            <Td>
-                                Петров
-                            </Td>
-                            <Td>
-                                Иван
-                            </Td>
-                            <Td>
-                                Сергеевич
-                            </Td>
-                            <Td>
-                                +7 (910) 123 12 34
-                            </Td>
-                            <Td>
-                                123456
-                            </Td>
-                            <Td>
-                                <IconButton
-                                    aria-label={"edit"}
-                                    icon={<EditIcon/>}
-                                    marginRight="10px"
-                                    onClick={onOpen}
-                                />
-                                <IconButton
-                                    aria-label={"delete"}
-                                    icon={<DeleteIcon/>}
-                                />
-                            </Td>
-                        </Tr>
+                        {
+                            patients.map(({ id, name, middleName, SNILS, surname, phoneNumber }, index) =>
+                                <Tr key={id}>
+                                    <Td>
+                                        { index + 1 }
+                                    </Td>
+                                    <Td>
+                                        { surname }
+                                    </Td>
+                                    <Td>
+                                        { name }
+                                    </Td>
+                                    <Td>
+                                        { middleName }
+                                    </Td>
+                                    <Td>
+                                        +7 { phoneNumber }
+                                    </Td>
+                                    <Td>
+                                        { SNILS }
+                                    </Td>
+                                    <Td>
+                                        <IconButton
+                                            aria-label={"edit"}
+                                            icon={<EditIcon/>}
+                                            marginRight="10px"
+                                            onClick={() => {changePatientHandler(id); onOpen()}}
+                                        />
+                                        <IconButton
+                                            aria-label={"delete"}
+                                            icon={<DeleteIcon/>}
+                                            onClick={() => deleteHandler(id)}
+                                        />
+                                    </Td>
+                                </Tr>
+                            )
+                        }
+
                     </Tbody>
                     <Tfoot>
                         <Tr>
@@ -123,8 +141,8 @@ export const ManagePacientsPage: FC = () => {
                     </Tfoot>
                 </Table>
             </TableContainer>
-            <ManagePatientsDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} patient={{
-                surname: "Петров",
+            <ManagePatientsDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} patient={currentPatient || {
+                surname: "",
                 name: "",
                 middleName: "",
                 SNILS: "",

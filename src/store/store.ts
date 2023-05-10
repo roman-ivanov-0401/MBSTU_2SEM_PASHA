@@ -1,12 +1,19 @@
 import {combineReducers, configureStore} from "@reduxjs/toolkit"
 import {authApi, patientApi} from "../service";
-import authReducer, {authSlice} from "./slices/auth.slice.ts"
-import {doctorApi} from "../service/doctor.service.ts";
-import {amenitieApi} from "../service/amenitie.service.ts";
+import authReducer from "./slices/auth.slice.ts"
+import patientReducer from "./slices/patient.slice.ts"
+import doctorReducer from "./slices/doctor.slice.ts"
+import amenitieReducer from "./slices/amenitie.slice.ts"
+import appointmentReducer from "./slices/appointment.slice.ts"
+import {doctorApi} from "../service";
+import {amenitieApi} from "../service";
 
 const rootReducer = combineReducers({
     authReducer,
-
+    patientReducer,
+    doctorReducer,
+    amenitieReducer,
+    appointmentReducer,
     [patientApi.reducerPath]: patientApi.reducer,
     [authApi.reducerPath]: patientApi.reducer,
     [doctorApi.reducerPath]: doctorApi.reducer,
