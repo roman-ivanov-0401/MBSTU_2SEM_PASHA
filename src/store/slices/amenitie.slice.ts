@@ -11,22 +11,22 @@ const initialState: AmenitieState = {
             id: "1",
             name: "Рентген",
             description: "Рентген",
-            endOfReception: new Date().toDateString(),
-            startOfReception: new Date().toDateString()
+            endOfReception: new Date().toLocaleString("ru"),
+            startOfReception: new Date().toLocaleString("ru")
         },
         {
             id: "2",
             name: "Анализ крови",
             description: "Анализ крови",
-            endOfReception: new Date().toDateString(),
-            startOfReception: new Date().toDateString()
+            endOfReception: new Date().toLocaleString("ru"),
+            startOfReception: new Date().toLocaleString("ru")
         },
         {
             id: "3",
             name: "Проверка зрения",
             description: "Проверка зрения",
-            endOfReception: new Date().toDateString(),
-            startOfReception: new Date().toDateString()
+            endOfReception: new Date().toLocaleString("ru"),
+            startOfReception: new Date().toLocaleString("ru")
         }
     ]
 }

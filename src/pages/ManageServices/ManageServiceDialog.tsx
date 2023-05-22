@@ -44,9 +44,9 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
         dispatch(amenitieSlice.actions.editAmenitie({
             id: service.id,
             description: formdata.description,
-            endOfReception: formdata.endOfReception.toString(),
+            endOfReception: formdata.endOfReception.toLocaleString("ru"),
             name: formdata.name,
-            startOfReception: formdata.startOfReception.toString()
+            startOfReception: formdata.startOfReception.toLocaleString("ru")
         }))
     }
 

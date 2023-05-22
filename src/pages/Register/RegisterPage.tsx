@@ -1,4 +1,4 @@
-import { FC } from "react"
+import {FC, useState} from "react"
 import {
     Box,
     Button,
@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import {useForm, SubmitHandler} from "react-hook-form";
 import {Fields} from "./registerPage.types.ts"
-import {useAppDispatch} from "../../hooks";
+import {useAppDispatch, useAppSelector} from "../../hooks";
 import {authSlice} from "../../store/slices";
 import {IPatient} from "../../models";
 import {IUser, Roles} from "../../models/IUser.ts";
@@ -23,32 +23,41 @@ export const RegisterPage: FC = () => {
     const {register,
         handleSubmit,
         formState: {errors, isValid} } = useForm <Fields>({mode: "onChange"})
+    const [emailALreadyExists, setEmailALreadyExists] = useState<boolean>(false)
     const dispatch = useAppDispatch()
+    const users = useAppSelector(state => state.authReducer.users)
     const onSubmit: SubmitHandler<Fields> = (
         {email, password, name, middleName, SNILS, surname, phoneNumber}
     ) => {
-        const newPatient: IPatient = {
-            id: String(Math.random()),
-            middleName,
-            SNILS,
-            phoneNumber,
-            name,
-            surname
+        const isEmailInSystem = users.filter(user => user.email == email)
+        if(isEmailInSystem.length != 0){
+            setEmailALreadyExists(true)
+        }
+        else{
+            const newPatient: IPatient = {
+                id: String(Math.random()),
+                middleName,
+                SNILS,
+                phoneNumber,
+                name,
+                surname
+            }
+
+            dispatch(patientSlice.actions.addPatient(newPatient))
+
+            const newUser: IUser = {
+                _id: String(Math.random()),
+                roles: [Roles.PATIENT],
+                patientId: newPatient.id,
+                email,
+                password
+            }
+
+            dispatch(authSlice.actions.addUser(newUser))
+
+            dispatch(authSlice.actions.setUser(newUser))
         }
 
-        dispatch(patientSlice.actions.addPatient(newPatient))
-
-        const newUser: IUser = {
-            _id: String(Math.random()),
-            roles: [Roles.PATIENT],
-            patientId: newPatient.id,
-            email,
-            password
-        }
-
-        dispatch(authSlice.actions.addUser(newUser))
-
-        dispatch(authSlice.actions.setUser(newUser))
     }
 
     return(
@@ -202,6 +211,12 @@ export const RegisterPage: FC = () => {
                         Зарегистрироваться
                     </Button>
                 </form>
+                {
+                    emailALreadyExists &&
+                    <Text>
+                        Пользователь с таким адресом почты уже есть в системе
+                    </Text>
+                }
             </Box>
         </Box>
     )
