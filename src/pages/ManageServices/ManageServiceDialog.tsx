@@ -28,10 +28,11 @@ export interface ManageServiceDialogProps{
     isOpen: boolean
     onClose: () => void
     service: IAmenitie,
-    ref:RefObject<HTMLButtonElement>
+    ref:RefObject<HTMLButtonElement>,
+    toCreate: boolean
 }
 export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
-    { isOpen, onClose, ref, service }
+    { isOpen, onClose, ref, service, toCreate }
 ) => {
 
     const { register,
@@ -40,14 +41,24 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
     } = useForm<FormFields>({mode: "onChange"})
     const dispatch = useAppDispatch()
     const onSubmit: SubmitHandler<FormFields> = (formdata) => {
-        console.log(formdata)
-        dispatch(amenitieSlice.actions.editAmenitie({
-            id: service.id,
-            description: formdata.description,
-            endOfReception: formdata.endOfReception.toLocaleString("ru"),
-            name: formdata.name,
-            startOfReception: formdata.startOfReception.toLocaleString("ru")
-        }))
+        if(toCreate){
+            dispatch(amenitieSlice.actions.addAmenitie({
+                id: Math.random().toString(),
+                description: formdata.description,
+                endOfReception: new Date(formdata.endOfReception.toString()).toLocaleString("ru"),
+                name: formdata.name,
+                startOfReception: new Date(formdata.startOfReception.toString()).toLocaleString("ru")
+            }))
+        }
+        else{
+            dispatch(amenitieSlice.actions.editAmenitie({
+                id: service.id,
+                description: formdata.description,
+                endOfReception: formdata.endOfReception.toLocaleString("ru"),
+                name: formdata.name,
+                startOfReception: formdata.startOfReception.toLocaleString("ru")
+            }))
+        }
     }
 
     return(
@@ -55,7 +66,11 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
             <AlertDialogOverlay>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        Редактирование услуги
+                        {
+                            toCreate ?
+                                "Создание услуги" :
+                                "Редактирование услуги"
+                        }
                     </AlertDialogHeader>
                     <AlertDialogBody>
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -122,7 +137,11 @@ export const ManageServiceDialog: FC<ManageServiceDialogProps> = (
                                     Отмена
                                 </Button>
                                 <Button variant="solid" colorScheme="teal" type="submit" onClick={onClose} disabled={!isValid}>
-                                    Изменить
+                                    {
+                                        toCreate ?
+                                            "Создать" :
+                                            "Изменить"
+                                    }
                                 </Button>
                             </Box>
 

@@ -12,7 +12,7 @@ import {
     TableContainer,
     Table,
     IconButton,
-    useDisclosure
+    useDisclosure, Button
 } from "@chakra-ui/react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import { ManageDoctorsDialog } from "./ManageDoctorsDialog.tsx"
@@ -23,6 +23,7 @@ import {IDoctor} from "../../models";
 export const ManageDoctorsPage: FC = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
+    const [toCreate, setToCreate] = useState<boolean>(false);
     const doctors = useAppSelector(state => state.doctorReducer.doctors)
     const dispatch = useAppDispatch();
     const deleteDoctorHander = (id: string): void => {
@@ -97,7 +98,7 @@ export const ManageDoctorsPage: FC = () => {
                                             aria-label={"edit"}
                                             icon={<EditIcon/>}
                                             marginRight="10px"
-                                            onClick={() => {editDoctorHandler(id); onOpen()}}
+                                            onClick={() => {editDoctorHandler(id); setToCreate(false); onOpen()}}
                                         />
                                         <IconButton
                                             aria-label={"delete"}
@@ -134,7 +135,12 @@ export const ManageDoctorsPage: FC = () => {
                     </Tfoot>
                 </Table>
             </TableContainer>
-            <ManageDoctorsDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} doctor={currentDoctor || {
+            <Box display={"flex"} justifyContent={"end"}>
+                <Button variant={"solid"} onClick={(): void => {setToCreate(true); onOpen()}}>
+                    Добавить
+                </Button>
+            </Box>
+            <ManageDoctorsDialog toCreate={toCreate} isOpen={isOpen} onClose={onClose} ref={cancelRef} doctor={currentDoctor || {
                 specialization: "",
                 name: "",
                 surname: "",

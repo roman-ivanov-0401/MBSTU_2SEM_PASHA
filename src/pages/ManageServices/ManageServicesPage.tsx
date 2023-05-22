@@ -12,7 +12,7 @@ import {
     TableContainer,
     Table,
     IconButton,
-    useDisclosure
+    useDisclosure, Button
 } from "@chakra-ui/react";
 import {DeleteIcon, EditIcon} from "@chakra-ui/icons";
 import { ManageServiceDialog } from "./ManageServiceDialog.tsx"
@@ -25,6 +25,7 @@ export const ManageServicesPage: FC = () => {
     const dispatch = useAppDispatch()
     const cancelRef = useRef<HTMLButtonElement>(null)
     const amenities = useAppSelector(state => state.amenitieReducer.amenities)
+    const [toCreate, setToCreate] = useState<boolean>(false);
     const [ currentAmenitie, setCurrentAmenitie ] = useState<IAmenitie | undefined>(undefined)
     const deleteAmenitieHandler = (_id: string): void => {
         dispatch(amenitieSlice.actions.deleteAmenitie(_id));
@@ -98,7 +99,7 @@ export const ManageServicesPage: FC = () => {
                                             aria-label={"edit"}
                                             icon={<EditIcon/>}
                                             marginRight="10px"
-                                            onClick={() => {editAmenitieHandler(id); onOpen()}}
+                                            onClick={() => {editAmenitieHandler(id); setToCreate(false); onOpen()}}
                                         />
                                         <IconButton
                                             onClick={() => deleteAmenitieHandler(id)}
@@ -135,7 +136,12 @@ export const ManageServicesPage: FC = () => {
                     </Tfoot>
                 </Table>
             </TableContainer>
-            <ManageServiceDialog isOpen={isOpen} onClose={onClose} ref={cancelRef} service={currentAmenitie || {
+            <Box display={"flex"} justifyContent={"end"}>
+                <Button variant={"solid"} onClick={(): void => {setToCreate(true); onOpen()}}>
+                    Добавить
+                </Button>
+            </Box>
+            <ManageServiceDialog toCreate={toCreate} isOpen={isOpen} onClose={onClose} ref={cancelRef} service={currentAmenitie || {
                 description: "",
                 endOfReception: "",
                 name: "",

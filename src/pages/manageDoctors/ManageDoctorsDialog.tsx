@@ -29,9 +29,10 @@ export interface ManageDoctorsDialogProps{
     onClose: () => void
     doctor: IDoctor,
     ref:RefObject<HTMLButtonElement>
+    toCreate: boolean
 }
 export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
-    { isOpen, onClose, ref, doctor }
+    { isOpen, onClose, ref, doctor, toCreate }
 ) => {
 
     const { register,
@@ -42,13 +43,25 @@ export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
     const dispatch = useAppDispatch();
 
     const onSubmit: SubmitHandler<FormFields> = ({ name, surname, middleName, specialization }) => {
-        dispatch(doctorSlice.actions.editDoctor({
-            id: doctor.id,
-            specialization,
-            name,
-            surname,
-            middleName
-        }))
+        if(toCreate){
+            dispatch(doctorSlice.actions.addDoctor({
+                id: Math.random().toString(),
+                specialization,
+                name,
+                surname,
+                middleName
+            }))
+        }
+        else{
+            dispatch(doctorSlice.actions.editDoctor({
+                id: doctor.id,
+                specialization,
+                name,
+                surname,
+                middleName
+            }))
+        }
+
     }
 
     return(
@@ -56,7 +69,11 @@ export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
             <AlertDialogOverlay>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        Редактирование данных врача
+                        {
+                            toCreate ?
+                                "Создание записи о враче" :
+                                "Редактирование данных врача"
+                        }
                     </AlertDialogHeader>
                     <AlertDialogBody>
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -67,7 +84,11 @@ export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
                                     id="surname"
                                     defaultValue={doctor.surname}
                                     {...register("surname", {
-                                        required: "Поле не может быть пустым"
+                                        required: "Поле не может быть пустым",
+                                        pattern: {
+                                            value: /^[А-Я]([А-Я]|[а-я])*/,
+                                            message: "Некорректное значение"
+                                        }
                                     })}
                                 />
                                 <FormErrorMessage>
@@ -83,7 +104,11 @@ export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
                                     id="name"
                                     defaultValue={doctor.name}
                                     {...register("name", {
-                                        required: "Поле не может быть пустым"
+                                        required: "Поле не может быть пустым",
+                                        pattern: {
+                                            value: /^[А-Я]([А-Я]|[а-я])*/,
+                                            message: "Некорректное значение"
+                                        }
                                     })}
                                 />
                                 <FormErrorMessage>
@@ -99,7 +124,11 @@ export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
                                     id="middleName"
                                     defaultValue={doctor.middleName}
                                     {...register("middleName", {
-                                        required: "Поле не может быть пустым"
+                                        required: "Поле не может быть пустым",
+                                        pattern: {
+                                            value: /^[А-Я]([А-Я]|[а-я])*/,
+                                            message: "Некорректное значение"
+                                        }
                                     })}
                                 />
                                 <FormErrorMessage>
@@ -133,7 +162,11 @@ export const ManageDoctorsDialog: FC<ManageDoctorsDialogProps> = (
                                     Отмена
                                 </Button>
                                 <Button variant="solid" colorScheme="teal" type="submit" onClick={onClose}>
-                                    Изменить
+                                    {
+                                        toCreate ?
+                                            "Создать" :
+                                            "Изменить"
+                                    }
                                 </Button>
                             </Box>
 
